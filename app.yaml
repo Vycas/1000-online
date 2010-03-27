@@ -1,0 +1,56 @@
+application: 1000-online
+version: 1
+runtime: python
+api_version: 1
+
+default_expiration: "365d"
+
+handlers:
+- url: /images
+  static_dir: images
+- url: /js
+  static_dir: js
+- url: /styles
+  static_dir: styles
+
+- url: /sessions.*
+  script: main.py
+  login: required
+- url: /stats.*
+  script: main.py
+  login: required
+- url: /host.*
+  script: main.py
+  login: required
+- url: /play.*
+  script: main.py
+  login: required
+- url: /update.*
+  script: main.py
+  login: required
+- url: /start.*
+  script: main.py
+  login: required
+- url: /open.*
+  script: main.py
+  login: required
+- url: /blind.*
+  script: main.py
+  login: required
+- url: /bet.*
+  script: main.py
+  login: required
+- url: /pass.*
+  script: main.py
+  login: required
+- url: /collect.*
+  script: main.py
+  login: required
+- url: /put.*
+  script: main.py
+  login: required
+- url: /retrieve.*
+  script: main.py
+  login: required
+- url: /.*
+  script: main.py

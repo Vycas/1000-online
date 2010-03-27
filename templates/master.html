@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Curiously Green
+Version    : 1.0
+Released   : 20080425
+
+-->
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<title>1000 Online - {% block title %}Main{% endblock %}</title>
+<meta name="keywords" content="cards 1000 thousand online web game" />
+<meta name="description" content="Web based online card game - 1000" />
+<link rel="stylesheet" type="text/css" href="/styles/default.css" />
+</head>
+<body>
+
+<div id="header">
+  <div id="header_inner">
+    <h1><span>1000</span>.online</h1>
+    <div id="slogan">Web-based online card game.</div>
+  </div>
+</div>
+
+<div id="main">
+  {% if ingame %}
+    {% block game %}{% endblock %}
+  {% else %}
+  <div id="lcol">
+    <div id="menu">
+      <ul>
+        {% if user %}
+          <li><a href="/">Home<span></span></a></li>
+          <li><a href="/sessions">Sessions<span></span></a></li>
+          <li><a href="/stats">Statistics<span></span></a></li>
+          <li><a href="http://www.pagat.com/marriage/1000.html">Rules<span></span></a></li>
+          <li><a href="/about">About<span></span></a></li>
+          <li><a href="/logout">Logout<span></span></a></li>
+        {% else %}
+          <li><a href="/">Home<span></span></a></li>
+          <li><a href="/login">Login<span></span></a></li>
+          <li><a href="http://www.pagat.com/marriage/1000.html">Rules<span></span></a></li>
+          <li><a href="/about">About<span></span></a></li>
+        {% endif %}
+      </ul>
+    </div>
+    <div id="menu_end"></div>
+    <div id="lcontent">
+      <h3 class="first">Beta.<span>Version</span></h3>
+      <p>Please note, that this is only beta version used for testing. 
+         You are welcome to play, test and send your feedback. However be warned,
+         all your games may be lost during development process or before final release. </p>
+      <br/>
+      <a class="blank" href="http://code.google.com/appengine/">
+        <img src="http://code.google.com/appengine/images/appengine-noborder-120x30.gif" alt="Powered by Google App Engine" />
+      </a>
+    </div>
+  </div>
+  
+  <div id="rcol">
+    <div id="rcontent">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<div id="footer">
+    &copy; 2010 1000.online. All rights reserved. Developed by <a href="mailto:vycas0@gmail.com">Vycas</a>. Design by <a href="http://www.nodethirtythree.com/">NodeThirtyThree</a> + <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.
+</div>
+
+</body>
+</html>

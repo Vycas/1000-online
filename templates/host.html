@@ -1,0 +1,14 @@
+{% extends "master.html" %}
+{% block title %}Session hosted{% endblock %}
+{% block content %}
+<div>
+  <h1 class="first">Session.<span>hosted</span></h1>
+  <p>The session has been successfully hosted. Find two friends and invite them to play.</p>
+  <div class="box">
+    <div class="box_inner">
+      <h2>Invitation and game link:</h2>
+      <p><a href="http://{{ domain }}/play?id={{ id }}">http://{{ domain }}/play?id={{ id }}</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

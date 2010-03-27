@@ -1,0 +1,187 @@
+==============================================================================
+
+                            PROJEKTAS: 1000.online
+
+==============================================================================
+
+1. Žaidimas
+------------------------------------------------------------------------------
+
+1.1 Kas yra 1000?
+    1000 yra kortų žaidimas populiarus rytų Europos šalyse, žadžiamas 3 arba 4
+žaidėjų. Žaidimo tikslas kuo greičiau surinkti 1000 taškų. T.y. pirmas žaidė-
+jas surinkęs 1000 laimi.
+
+1.2 Trumpas taisyklių aprašymas.
+    Žaidžiama daug partijų kol kažkas laimi. Kiekvienai partijai dalinamos
+kortos po 7 kiekvienam žaidėjui ir 3 į banką. Jei žaidžiama keturiese, tas 3 
+kortas gauna ketvirtas žaidėjas. Tačiau kuriamame projekte bus galima žaisti
+tik tryse, todėl 4 žaidėjo nenagrinėsime paprastumo labai. Kortų dalintojas
+keičiasi su lig kiekviena partija. Žaidėjas esantis po dalintojo pradeda.
+    Dalyvauja tokios kortos: tūzai, dešimkės, karaliai, damos, valetai,
+devynkės. Reikia pastebėti, kad dęšimkė yra antra pagal striprumą korta.
+    Iš pradžių vyksta šaukimai. Kas iššaukia daugiausiai tas nuperka banką.
+Pirmas žaidėjas privalo šaukti 100. Kiti privalo kelti arba pasuoti. Keliama
+tik skaičiumi daliu iš 10. Maksimalus šaukimas - 300. Šaukia visi žaidėjai
+ratu, kol lieka tik vienas daugiausiai iššaukęs, o kiti lieka pasavę.
+    Žaidėjai gali šaukti tamsoje. T.y. nematydami savo kortų. Tuomet jų taškai
+šioje partijoje dvigubės (tiek laimėjimo atveju tiek pralaimėjimo). Jei buvo
+Žaidžiama šviesoje nupirktas bankas parodomas visiems. Jei tamsoje jį pasiima
+nupirkęs žaidėjas ir niekam nerodo.
+    Nupirkus banką reikia atsimesti tris kortas, jų niekam nerodant. Partijos
+pabaigoje atsimesto kortos vistiek bus sumuojamos į surinktus taškus. Taip pat
+galima dar pakelti šaukimą arba palikti tokį koks buvo perkant banką. Tačiau
+jo nuleisti negalima.
+    Partiją pradeda banką nupirkęs žaidėjas. Tada visi žaidėjai meta kortas iš
+eilės. Sumestus tris kortas jas paiima tas - kurio korta didžiausia. T.y. jis
+gauna kirtį ir jis pradeda sekantį ėjimą. Privaloma dėti tos rūšies kortą,
+kuria pradėjo pirmas žaidėjas. Jei tokios neturi - tuomet dedamas koziris, jei
+neturi ir tokio - tuomet gali dėti bet ką.
+    Žaidimo eigoje galima daryti šaukimus. T.y. paskelbti savo kozirį. Šaukti
+galima tada jei turima pora - tos pačios rūšies karalius ir dama. Patys šauki-
+mai automatiškai duoda taškus į šaukiančio žaidėjo sąskaitą.
+    > Vynai - 40 taškų
+    > Kryžiai - 60 taškų
+    > Bugnai - 80 taškų
+    > Čirvai - 100 taškų
+    Kuomet partija baigiama (kai nebelieka kortų), skaičiuojami taškai. Skai-
+čiuojami padaryti šaukimai ir surinkti kirčiai. Atitinkamų kortų vertės:
+    > Tūzas - 11 taškų
+    > 10 - 10 taškų
+    > Karalius - 4 taškai
+    > Dama - 3 taškai
+    > Valetas - 2 taškai
+    > 9 - 0 taškų
+    Suskaičiavus taškus, jei žaidėjas kuris šaukė privalėjo surinkti tiek kiek
+šaukė. Jei surinko - šaukimo suma jam užsirašys į pliusą. Jei ne - tiek bus
+atima iš bendros taškų sumos. Kitiems žaidėjams surinkta taškų suma apvalinasi
+iki dešimčių ir rašosi į pliusą.
+    Jei žaidėjas turi 900 taškų arba daugiau, jam taškai surinkti per kitų
+žaidėjų žaidimus (kai banką laimėjo kitas žaidėjas) nesiskaičiuoja. T.y. tur-
+int 900 ir daugiau, žaidimą galima laimėti tik pačiam nuperkant banką ir sėk-
+mingai sužaidžiant. Jei per tris ėjimus nuo 900 pasiekimos nebus nupirktas ban-
+kas, tam žaidėjui atsiims 120 taškų.
+    Vieną kartą per žaidimą galima nupirkus banką atsisakyti žaisti, tuomet 
+sakoma, kad žaidėjas gauna pliusą. Tuomet kiti žaidėjai gauna po 60 taškų ir
+kortos perdalinamos to pačio dalintojo. Jei bankas buvo nupirktas tamsoje - 
+kiti žaidėjai gauna po 120 taškų.
+    Jei išdalinus kortas gaunamos 4 devynkės - kortos permaišomos to pačio
+dalintojo.
+    Jei išdalinus kortas gaunamos 3 devynkės - žadžiamos devynkių žaidimas.
+Devynkes turinti žaidėjas išsirenka vieną iš jų ir nerodo kitiems. Tada kiti
+išsirenka bet kokia kortą. Devynkes turintis žaidėjas parodo kokios rušies
+yra devynkė. Jei kito žaidėjo kortos rūris tokia pat, jis gauna taškų, o 
+devynkes turintis žaidėjas ne. Jei abu oponentai pasirinko tą patį rūšį ir
+laimėjo, jie taškus dalinsis. Jei nei vienas žaidėjas neatspejo rūšies, taškus
+gaus devynkes tūrėjas žaidėjas. Devynkių taškų vertės tokios pačios kaip ir
+atitinkamų rūšių šaukimai.
+
+1.3 Pilnas taisyklių aprašymas
+    Jį galima rasti čia: http://www.pagat.com/marriage/1000.html
+
+
+2. Projektas
+------------------------------------------------------------------------------
+
+2.1 Projektas
+    Projektas kuriamas Python laisvajam dalykui dėstomam VU MIF. Projektas
+rašomas Python programavimo kalba panaudojant Django karkasą. Tai bus
+Web-aplikacija - programa kuri veikia web'e.
+    
+2.2 Projekto aprašymas
+    Žaidimas bus patalpintas kokiam nors serveryje internete ir jį bus galima
+pasiekti per tam tikrą URL. Prisijungus svetainėje reikės užsiregistruoti
+nurodant vardą, email ir slaptažodį. Numatyta galimybė slaptažodį atstatyti,
+vartotojas jį užmiršo. Tuomet įvedamas registracijos email ir atsatymo nuoroda
+bus atsiųsta email'u. Prisijungus bus galima pasikeisti slaptažodį įvedant 
+senajį ir du kartus naująjį.
+    Prisijungus patenkama į sesijų langą - t.y. langą (lentelę) kuriame rodomi
+visi pradėti žaidimai. Galima prisijungti tiek prie pradėto žaidimo tiek su-
+kurti naują.
+    Jei sukuriamas naujas žaidimas, kūrėjas automatiškai tam šio žaidimo pirmu
+žaidėju. Jam duodama nuoroda, kuria gali pasidalinti su kitais žaidėjais. Kuo-
+met kitas žaidėjas paspaudžia ant nuorodos, jis tampa šio žaidimo žaidėju.
+    Žaidimas pradedamas tik tada kai visi trys žaidėjai prisijungia. Tuomet
+einančiam žaidėjui (dalintojui) atsiranda mygtukas 'start', kuris išmaišo ir
+išdalina kortas. Tuomet visiems žaidėjams atsiranda 2 mygtukai 'open' ir
+'blind', su kuriais pasirenkama ar bus žaidžiama tamsoje ar šviesoje. Jei
+pasirenkama šviesoje išdalintos kortos atverčiamos, priešingu atveju lieka
+užverstos. Šaukimo metu, bet kada prieš nuperkant banką galima atsiversti
+kortas, jei buvo žaidžiama tamsoje. Tuomet žaidimas tampa šviesiu. Tačiau kai
+tik kortos pašviesinamos, jos tokios ir lieka. Taigi žaidžiant tamsose buna
+mygtukas 'open'. Tuomet prasideda šaukimai. Žaidėjai ratu šaukia arba pasuoja
+. Tam yra du mygtukai 'bet' ir 'pass' bei šaukiamos sumos pasirinkimas. Pirmam
+žaidėjui pasuoti negalima. Kuomet lieka tik vienas žaidžianti žaidėjas. Ati-
+dengiamas bankas (jei buvo žaidžiama šviesiai) ir visiems žaidėjams parodomas
+mygtukas 'ok'. T.y. kad jie galėtų pamatyti ir kortas ir leisti žaisti toliau.
+Tuomet kortos patenka pas šaukiantįjį. Jam rodomas šaukiama suma, kuri yra
+gali būti tokia pat kaip nupirkto banko arba didesnė ir mygtukas 'begin',
+kuris atsiranda tik tada kai išsimetamos trys kortos. Kortos išmetamos ant jų
+paspaudžiant pele. Jei paspaudžiama ant išmestų kortų jos gražinamos atgal
+(suklydimo atveju). Pradėjus žaidima žaidėjai paeiliui spaudžia ant kortų,
+jas išmesdami. Kuomet išmetamos trys kortos, atsiranda mygtukas 'ok', lei-
+džiantis pradėti sekantį ėjimą. Kuomet padema poros pusė automatiškai vykdomas
+šaukimas.
+    Viso žaidimo metu, ekrane rodomi žaidėjų vardai, taškų kiekis, ir einantis
+žaidėjas. Šaukimo metus matoma, kiek koks žaidėjas iššaukė ir ar pasavo, bei
+ar šaukia tamsoje.
+    Ekrano viršuj rodoma svarbi informacija, tokia kaip kas nupirko turgų, kas
+paėmė kirtį ir panasiai.
+    Taip pat numatyta statistikos kaupimo galimybė, kuomet galima pažiūrėti,
+kaip sekasi, t.y. matyti taškų kitimo lentelę bei grafiką.
+    Numatyta ir devynkių žaidimo galimybė, jei liks laiko realizuojant pro-
+jektą.
+    Bet kada žaidimo metu galima pasitraukti, nes visa būsenos informacija
+saugoma duomenų bazėje. Tuomet kiti žaidėjai tiesiog negalės eiti nes matys
+užrašą, kad laukiama kito žaidėjo. Kaip žaidėjai sutaria kada žais - tai jau
+ne šio žaidimo sistemos reikalas. Pasitraukiama iš žaidimo paspaudus mygtuką
+'leave', kuris rodomas visada.
+    Sesijų lentelėje matoma: kas pradėjo žaidimą, žaidimo id, kada žaidimas
+pradėtas, kada buvo paskutinis ėjimas, kieno dabar ėjimas (jei ėjimas yra tavo
+tuo eilutė paryškinama), bei kokia žaidimo būsena (nepradėtas, žaidžiamas,
+baigtas - kas laimėjo?). Paspaudus ant eilutės patenkama į žaidimą, tokį koks
+jis buvo kažkada paliktas.
+
+
+3. Įgyvendinimas
+------------------------------------------------------------------------------
+
+3.1 Įgyvendinimo planas
+    Planuojama projektą vystyti tokia tvarka:
+PRADZIA:
+- Sukurti django projektą
+- Sukurti kortų klasę
+- Sukurti pirminį modelį (sesijas, žaidimus, žaidėjus)
+- Instaliuoti kažkokį template
+- Sukurti prisijungimo sistemą
+- Sukurti sesijų lentelę (sesijų startavimas/prisijungimas)
+- Sukurti žaidimo template/view
+2010.03.18:
+- Palaipsniui diegti žaidimo taisykles bei jų testus
+    > Žaidėjų prisijungimas
+    > Kortų dalinimas
+    > Žaidėjus ėjimas ratu
+    > Žaidimo startavimas
+    > Open/Blind pasirinkimas
+    > Banko pirkimas
+    > Kortų atsimetimai
+    > Galutinis šaukimas
+    > Žaidimo pradėjimas
+2010.03.25
+    > Kortų mėtymas žaidimo eigoje
+    > Šaukimai
+    > Taškų sumavimas / nugalėtojo nustatymas
+    > Perėjimas prie naujo žaidimo
+    > Tikrinimas dėl sesijos laimėjimo
+2010.04.01
+- Paskelbti žaidima public vietoje, kad būtų galima pradėti testuoti
+2010.04.08
+- Sukurti papildomas taisykles
+    > Pliuso dėjimas
+    > Riba virš 900
+    > Devynkių žaidimas
+2010.04.15
+- Sukurti statistikos rodymą
+
+3.2 Projektavimas
+    ...TODO...
