@@ -2,6 +2,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 from models import Session, Player, GameError
+from cards import ThousandCard
 import simplejson as json
 import os
 
@@ -213,13 +214,8 @@ class Update(webapp.RequestHandler):
             if session.state == 'ready':
                 turn = session.dealer
                 response['state'] = 'ready'
-                if session.bet is not None:
-                    next = session.getNextPlayer(player)
-                    nextnext = session.getNextPlayer(next)
-                    response['player_info'] = 'Took: %d' % player.bet
-                    response['opponent1_info'] = 'Took: %d' % next.bet
-                    response['opponent2_info'] = 'Took: %d' % nextnext.bet
             elif session.state == 'bettings':
+                response['info_header'] = session.info
                 response['bank'] = ['BACK'] * 3
                 response['passed'] = player.passed
                 response['first'] = session.isFirstMove()
@@ -239,7 +235,7 @@ class Update(webapp.RequestHandler):
                         response[p + '_info'] = ''
             elif session.state == 'collect':
                 winner = session.betsWinner()
-                response['info_header'] = winner.user.nickname() + ' takes the bank'
+                response['info_header'] = '%s takes the bank' % session.betsWinner().user.nickname()
                 response['state'] = 'collect'
                 response['cards'] = [str(c) for c in sorted(player.cards)]
                 if player == winner:
@@ -263,12 +259,18 @@ class Update(webapp.RequestHandler):
                     response['bank'] = ['BACK'] * len(session.bank)
             elif session.state == 'inGame':
                 response['state'] = 'inGame'
-                next = session.getNextPlayer(player)
-                nextnext = session.getNextPlayer(next)
-                offset = max(len(player.thrown), len(next.thrown), len(nextnext.thrown))
+                opponent1 = session.getNextPlayer(player)
+                opponent2 = session.getNextPlayer(opponent1)
+                offset = max(len(player.thrown), len(opponent1.thrown), len(opponent2.thrown))
                 response['bank'] = []
                 response['memo'] = []
-                for p in (player, next, nextnext):
+                response['taken'] = 'Taken: ' + str(player.getGamePoints())
+                for pl in ('player', 'opponent1', 'opponent2'):
+                    p = eval(pl)
+                    if p == session.betsWinner():
+                        response[pl + '_info'] = 'Plays %d' % session.bet
+                        if session.blind:
+                            response[pl + '_info'] += ' (Blind)'
                     if offset > 0 and len(p.thrown) == offset:
                         response['bank'].append(str(p.thrown[offset-1]))
                     else:
@@ -284,10 +286,29 @@ class Update(webapp.RequestHandler):
                     response['trump'] = ''
                 if session.info:
                     response['info_header'] = session.info
+            elif session.state == 'endGame':
+                turn = session.dealer
+                response['state'] = 'ready'
+                response['info_header'] = session.info
+                opponent1 = session.getNextPlayer(player)
+                opponent2 = session.getNextPlayer(opponent1)
+                response['player_info'] = 'Took: %d' % player.bet
+                response['opponent1_info'] = 'Took: %d' % opponent1.bet
+                response['opponent2_info'] = 'Took: %d' % opponent2.bet
+                response['cards'] = []
+                response['bank'] = [str(p.thrown[-1]) for p in (player, opponent1, opponent2)]
+            elif session.state == 'finish':
+                response['state'] = 'finish'
+                response['info_header'] = session.info
+                response['player_info'] = 'Took: %d' % player.bet
+                response['opponent1_info'] = 'Took: %d' % opponent1.bet
+                response['opponent2_info'] = 'Took: %d' % opponent2.bet
+                response['cards'] = []
+                response['bank'] = [str(p.thrown[-1]) for p in (player, opponent1, opponent2)]
 
-            if turn == player: response['player_turn'] = 'Waiting for turn'
-            elif turn == opponent1: response['opponent1_turn'] = 'Waiting for turn'
-            elif turn == opponent2: response['opponent2_turn'] = 'Waiting for turn'
+            if turn == player: response['player_turn'] = True
+            elif turn == opponent1: response['opponent1_turn'] = True
+            elif turn == opponent2: response['opponent2_turn'] = True
 
         else:
             response['info_header'] = 'Waiting for players'

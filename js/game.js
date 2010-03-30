@@ -11,35 +11,18 @@ function getParam(name) {
 }
 
 var dict;
+var last_turn;
+var last_state;
 
 function sendMessage(url) {
   var xmlHttp = createXmlHttpRequestObject();
   
   if (xmlHttp) {
     try {
-      xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4) {
-          if (xmlHttp.status == 200) {
-            return xmlHttp.responseText;
-          }
-          else {
-            return false;
-          }
-        }
-        else {
-          return false;
-        }
-      }
       xmlHttp.open("POST", url, false);
       xmlHttp.send(null);
     }
-    catch(e) {
-      return false;
-    }
-    return true;
-  }
-  else {
-    return false;
+    catch(e) {}
   }
 }
 
@@ -49,81 +32,87 @@ function update() {
   if (xmlHttp) {
     try {
       xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4) {
-          if (xmlHttp.status == 200) {
-              var response = xmlHttp.responseText;
-              eval('dict = ' + response);
-              document.getElementById('info_header').innerHTML = dict.info_header;
-              var controls = ['start', 'open', 'blind', 'bettings', 'bet', 'pass', 'collect', 'last'];
-              var players = ['player', 'opponent1', 'opponent2'];
-              var properties = ['username', 'points', 'turn', 'info'];
-              for (var i in players) {
-                for (var j in properties) {
-                  document.getElementById(players[i]+'_'+properties[j]).innerHTML = 
-                    eval('dict.'+players[i]+'_'+properties[j]);
-                }
-              }
-              for (var i in controls) {
-                hide(controls[i]);
-              }
-              
-              var myturn = dict.player_turn != '';
-
-              switch (dict.state) {
-                case 'waiting':
-                  break;
-                case 'ready':
-                  if (myturn) {
-                    show('start');
-                  }
-                  break;
-                case 'open_or_blind':
-                  show('open');
-                  show('blind');
-                  break;
-                case 'go_blind':
-                  show('open');
-                case 'go_open':
-                  if (myturn && !dict.passed) {
-                    show('bettings');
-                    show('bet');
-                    if (!dict.first) {
-                      show('pass');
-                    }
-                    add_bets(dict.bettings)
-                  }
-                  break;
-                case 'collect':
-                  if (myturn) {
-                    show('collect');
-                  }
-                  break;
-                case 'finalBet':
-                  if (myturn) {
-                    show('bettings');
-                    show('bet');
-                    add_bets(dict.bettings)
-                  }
-                  break;
-                case 'inGame':
-                  show('last')
-                  document.getElementById('trump').innerHTML = dict.trump;
-                  break;
-              }
-              
-
-              
-              for (var i=1; i<=3; i++) {
-                eval("var e=document.getElementById('bank"+i+"'); var v=dict.bank["+(i-1)+"]; "+
-                     "e.src='/images/cards/'+v+'.gif'; e.style.display=v?'inline':'none';");
-              }
-              for (var i=1; i<=10; i++) {
-                eval("var e=document.getElementById('card"+i+"'); var v=dict.cards["+(i-1)+"]; "+
-                     "e.src='/images/cards/'+v+'.gif'; e.style.display=v?'inline':'none';");
-              }
+        if ((xmlHttp.readyState == 4) && (xmlHttp.status == 200)) {
+          var response = xmlHttp.responseText;
+          eval('dict = ' + response);
+          document.getElementById('info_header').innerHTML = dict.info_header;
+          var myturn = dict.player_turn;
+          var turn = dict.player_turn ? 1 : (dict.opponent1_turn ? 2 : 3);
+          var players = ['player', 'opponent1', 'opponent2'];
+          var properties = ['username', 'points', 'info'];
+          for (var i in players) {
+            for (var j in properties) {
+              document.getElementById(players[i]+'_'+properties[j]).innerHTML = 
+                eval('dict.'+players[i]+'_'+properties[j]);
+            }
+            var e = document.getElementById(players[i]+'_turn');
+            e.style.display = eval('dict.'+players[i]+'_turn') ? 'block' : 'none';
           }
-          else {
-            alert(xmlHttp.statusText);
+          if ((last_turn != turn) || (last_state != dict.state)) {
+            last_turn = turn;
+            last_state = dict.state;
+            document.title = myturn ? '1000 Online - Game (Your turn)' : '1000 Online - Game';
+            document.getElementById('trump').innerHTML = '';
+            document.getElementById('taken').innerHTML = '';
+            var controls = ['start', 'open', 'blind', 'bettings', 'bet', 'pass', 'collect', 'last'];
+            for (var i in controls) {
+              hide(controls[i]);
+            }
+            
+            switch (dict.state) {
+              case 'waiting':
+                break;
+              case 'ready':
+                if (myturn) {
+                  show('start');
+                }
+                break;
+              case 'open_or_blind':
+                show('open');
+                show('blind');
+                break;
+              case 'go_blind':
+                show('open');
+              case 'go_open':
+                if (myturn && !dict.passed) {
+                  show('bettings');
+                  show('bet');
+                  if (!dict.first) {
+                    show('pass');
+                  }
+                  add_bets(dict.bettings);
+                }
+                break;
+              case 'collect':
+                if (myturn) {
+                  show('collect');
+                }
+                break;
+              case 'finalBet':
+                if (myturn) {
+                  show('bettings');
+                  show('bet');
+                  add_bets(dict.bettings);
+                }
+                break;
+              case 'inGame':
+                show('last');
+                document.getElementById('trump').innerHTML = dict.trump;
+                document.getElementById('taken').innerHTML = dict.taken;
+                break;
+              case 'finish':
+                break;
+            }
+          }
+          for (var i=1; i<=3; i++) {
+            eval("var e=document.getElementById('bank"+i+"'); var v=dict.bank["+(i-1)+"]; "+
+                 "if (v) {e.src='/images/cards/'+v+'.gif'; e.style.display='inline';}" + 
+                 "else {e.style.display='none'}");
+          }
+          for (var i=1; i<=10; i++) {
+            eval("var e=document.getElementById('card"+i+"'); var v=dict.cards["+(i-1)+"]; "+
+                 "if (v) {e.src='/images/cards/'+v+'.gif'; e.style.display='inline';}" + 
+                 "else {e.style.display='none'}");
           }
         }
       }
@@ -138,7 +127,7 @@ function update() {
 
 function updater() {
   update();
-  window.setTimeout(updater, 2000);
+  window.setTimeout(updater, 3000);
 }
 
 function show(element) {
@@ -201,19 +190,12 @@ function post(cmd, id) {
   update();
 }
 
-function keepLastTrick(sec) {
-  if ((dict.state == 'inGame') && (dict.bank.length == 0)) {
-    alert('ok');
-    showLast();
-    window.setTimeout(hideLast, sec*1000);
-  }
-}
-
 function showLast() {
   if (dict.state == 'inGame') {
     for (var i=1; i<=3; i++) {
       eval("var e=document.getElementById('bank"+i+"'); var v=dict.memo["+(i-1)+"]; "+
-           "e.src='/images/cards/'+v+'.gif'; e.style.display=v?'inline':'none';");
+           "if (v) {e.src='/images/cards/'+v+'.gif'; e.style.display='inline';}" + 
+           "else {e.style.display='none'}");
     }
   }
 }
@@ -222,7 +204,8 @@ function hideLast() {
   if (dict.state == 'inGame') {
     for (var i=1; i<=3; i++) {
       eval("var e=document.getElementById('bank"+i+"'); var v=dict.bank["+(i-1)+"]; "+
-           "e.src='/images/cards/'+v+'.gif'; e.style.display=v?'inline':'none';");
+           "if (v) {e.src='/images/cards/'+v+'.gif'; e.style.display='inline';}" + 
+           "else {e.style.display='none'}");
     }
   }
 }

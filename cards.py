@@ -99,8 +99,8 @@ class Card:
               '10': 'Ten', '9': 'Nine', '8': 'Eight', '7': 'Seven', '6': 'Six',
               '5': 'Five', '4': 'Four', '3': 'Three', '2': 'Two'}
     
-    kind_order = ('S', 'C', 'D', 'H')
-    value_order = ('2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A')
+    kind_order = ['S', 'C', 'D', 'H']
+    value_order = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 
 
 class ThousandCard(Card):
@@ -117,7 +117,7 @@ class ThousandCard(Card):
     pairs = {'S': 40, 'C': 60, 'D': 80, 'H': 100}
     weight = {'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2, '9': 0}
     values = {'A': 'Ace', 'K': 'King', 'Q': 'Queen', 'J': 'Jack', '10': 'Ten', '9': 'Nine'}
-    value_order = ('9', 'J', 'Q', 'K', '10', 'A')
+    value_order = ['9', 'J', 'Q', 'K', '10', 'A']
 
 
 if __name__ == "__main__":

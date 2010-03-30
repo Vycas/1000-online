@@ -206,7 +206,7 @@ class Session(db.Model):
             - Current user is not a dealer.
         """
 
-        if self.state != 'ready':
+        if not self.state in ('ready', 'endGame'):
             raise GameError('Current game have not been finished or session is not full.')
         if player != self.dealer:
             raise GameError('Only the dealer can start the game.')
@@ -223,6 +223,7 @@ class Session(db.Model):
             player.tricks = []
             player.calls = ''
             player.put()
+        self.info = '%s deals the cards' % player.user.nickname()
         self.bank = cards[21:24]
         self.turn = self.dealer = self.getNextPlayer(self.dealer)
         self.bet = 90
@@ -260,9 +261,19 @@ class Session(db.Model):
         player.bet = bet
         player.put()
         self.bet = bet
-        self.turn = self.getNextPlayer(player)
+        self.info = '%s raises up to %d' % (player.user.nickname(), bet)
         self.put()
-
+        if bet == 300:
+            self.finishBets()
+            return
+        next = self.getNextPlayer(player)
+        if next.passed:
+            next = self.getNextPlayer(next)
+        if next.passed:
+            self.finishBets()
+            return
+        self.turn = next
+        self.put()
         if self.betsOver():
             self.finishBets()
 
@@ -288,9 +299,16 @@ class Session(db.Model):
 
         player.passed = True
         player.put()
-        self.turn = self.getNextPlayer(player)
+        self.info = '%s passes' % player.user.nickname()
         self.put()
-
+        next = self.getNextPlayer(player)
+        if next.passed:
+            next = self.getNextPlayer(next)
+        if next.passed:
+            self.finishBets()
+            return
+        self.turn = next
+        self.put()
         if self.betsOver():
             self.finishBets()
 
@@ -378,6 +396,7 @@ class Session(db.Model):
 
         player.cards += self.bank
         player.put()
+        self.info = '%s takes the bank' % player.user.nickname()
         self.bank = []
         self.state = 'finalBet'
         self.put()
@@ -456,7 +475,9 @@ class Session(db.Model):
             raise GameError('Your bet must be higher or equal than current bet.')
 
         self.bet = finalBet
+        player.bet = finalBet
         self.state = 'inGame'
+        self.info = '%s plays %d' % (player.user.nickname(), finalBet)
         player.tricks = self.bank
         self.bank = []
         player.put()
@@ -512,8 +533,7 @@ class Session(db.Model):
                     c.isTrump = (c.kind() == self.trump)
                 else:
                     c.isTrump = (c.kind() == self.bank[0].kind())
-                c.__cmp__ = lambda x: cardCompare(c, x)
-            bestCard = max(self.bank)
+            bestCard = sorted(self.bank, cmp=cardCompare)[-1]
             bestCard.player.tricks += self.bank
             bestCard.player.put()
             self.bank = []
@@ -541,11 +561,20 @@ class Session(db.Model):
                         if p.points > 900:
                             pts = 0
                         p.points += pts
+                    if p.points >= 1000:
+                        self.state = 'finish'
+                        self.info = '%s has won the game!' % p.user.nickname()
+                        #TODO: add finish date
+                        self.put()
                     p.bet = pts
                     p.put()
-                h = History(session=self, player_1=p1.points, player_2=p2.points, player_3=p3.points)
+                h = History(session=self,
+                            player_1=self.player_1.points,
+                            player_2=self.player_2.points,
+                            player_3=self.player_3.points)
                 h.put()
-                self.state = 'ready'
+                if self.state != 'finish':
+                    self.state = 'endGame'
                 self.put()
                 return
         else:
