@@ -665,6 +665,19 @@ class TestSessionGameplay(unittest.TestCase):
         self.assertEqual(self.session.player_1.points, 130)
         self.assertEqual(self.session.player_2.points, 0)
         self.assertEqual(self.session.player_3.points, 880)
+        self.assertEqual(self.session.player_3.barrel, 1)
+        
+    def test_over880times3(self):
+        self.processGame()
+        self.session.player_3.points = 880
+        self.session.player_3.barrel = 3
+        self.session.putCard(self.session.player_3, ThousandCard('HK'))
+        self.assertEqual(self.session.state, 'endGame')
+        self.assertEqual(self.session.turn, self.session.dealer)
+        self.assertEqual(self.session.player_1.points, 130)
+        self.assertEqual(self.session.player_2.points, 0)
+        self.assertEqual(self.session.player_3.points, 760)
+        self.assertEqual(self.session.player_3.barrel, 0)
     
     def test_sessionFinish(self):
         self.processGame()

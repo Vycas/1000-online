@@ -46,7 +46,11 @@ function update() {
                 eval('dict.'+players[i]+'_'+properties[j]);
             }
             if (eval('dict.'+players[i]+'_plus')) {
-              document.getElementById(players[i]+'_username').innerHTML += ' (+)';
+              document.getElementById(players[i]+'_username').innerHTML += ' +';
+            }
+            var barrel = eval('dict.'+players[i]+'_barrel');
+            if (barrel > 0) {
+              document.getElementById(players[i]+'_username').innerHTML += ' (' + barrel + ')';
             }
             var e = document.getElementById(players[i]+'_turn');
             e.style.display = eval('dict.'+players[i]+'_turn') ? 'block' : 'none';

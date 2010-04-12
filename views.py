@@ -202,10 +202,12 @@ class Update(webapp.RequestHandler):
                 response[p + '_username'] = pl.user.nickname()
                 response[p + '_points'] = str(pl.points) + ' points'
                 response[p + '_plus'] = pl.plus
+                response[p + '_barrel'] = pl.barrel
             else:
                 response[p + '_username'] = '[Not connected]'
                 response[p + '_points'] = ''
                 response[p + '_plus'] = False
+                response[p + '_barrel'] = 0
 
         response['info_header'] = ''
 

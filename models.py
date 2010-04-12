@@ -44,6 +44,7 @@ class Player(db.Model):
     passed = db.BooleanProperty(default=False)
     plus = db.BooleanProperty(default=False)
     calls = db.StringProperty()
+    barrel = db.IntegerProperty(default=0)
     
     def __cmp__(self, other):
         return self.key().id().__cmp__(other.key().id())
@@ -458,12 +459,12 @@ class Session(db.Model):
         self.turn = nextdealer
         self.info = '%s passes the game' % player.user.nickname()
         self.put()
-        pts = 60
-        if self.blind:
-            pts *= 2
         opponent1 = self.getNextPlayer(player)
         opponent2 = self.getNextPlayer(opponent1)
         for op in (opponent1, opponent2):
+            pts = 60
+            if self.blind:
+                pts *= 2
             if op.points >= 880:
                 pts = 0                
             op.points += pts
@@ -591,6 +592,11 @@ class Session(db.Model):
                         self.info = '%s has won the game!' % p.user.nickname()
                         #TODO: add finish date
                         self.put()
+                    elif p.points >= 880:
+                        p.barrel += 1
+                        if p.barrel > 3:
+                            p.barrel = 0
+                            p.points -= 120
                     p.bet = pts
                     p.put()
                 h = History(session=self,
