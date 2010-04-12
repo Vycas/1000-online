@@ -54,17 +54,17 @@ function update() {
             document.title = myturn ? '1000 Online - Game (Your turn)' : '1000 Online - Game';
             document.getElementById('trump').innerHTML = '';
             document.getElementById('taken').innerHTML = '';
-            var controls = ['start', 'open', 'blind', 'bettings', 'bet', 'pass', 'collect', 'last'];
+            var controls = ['deal', 'open', 'blind', 'bettings', 'bet', 'pass', 'collect', 'last'];
             for (var i in controls) {
               hide(controls[i]);
             }
             
             switch (dict.state) {
-              case 'waiting':
+              case 'hosted':
                 break;
               case 'ready':
                 if (myturn) {
-                  show('start');
+                  show('deal');
                 }
                 break;
               case 'open_or_blind':
@@ -154,6 +154,9 @@ function add_bets(bets) {
 }
 
 function put(card) {
+  if (!dict.player_turn) {
+    return;
+  }
   regex = /\/(\w+).gif$/;
   name = card.src.match(regex)[1];
   if (name == 'BACK') {
@@ -166,6 +169,9 @@ function put(card) {
 }
 
 function retrieve(card) {
+  if (!(dict.player_turn && dict.state == 'finalBet')) {
+    return;
+  }
   regex = /\/(\w+).gif$/;
   name = card.src.match(regex)[1];
   if (name == 'BACK') {
@@ -177,6 +183,9 @@ function retrieve(card) {
 }
 
 function bet() {
+  if (!(dict.player_turn && (dict.state == 'bettings' || dict.state == 'finalBet'))) {
+    return;
+  }
   var bettings = document.getElementById('bettings');
   var bet = bettings.options[bettings.selectedIndex].value;
   var url = '/bet?id=' + getParam('id') + '&upto=' + bet;
@@ -185,6 +194,9 @@ function bet() {
 }
 
 function post(cmd, id) {
+  if (!dict.player_turn) {
+    return;
+  }
   var url = '/' + cmd + '?id=' + getParam('id');
   sendMessage(url);
   update();
@@ -210,6 +222,6 @@ function hideLast() {
   }
 }
 
-function leave() {
+function quit() {
   location.href = '/sessions'
 }

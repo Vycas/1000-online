@@ -53,15 +53,15 @@
 
 <div id="gamemenu">
   <h3 class="first">Game menu</h3>
-  <input id="start" type="submit" value="Start" onclick="post('start')"/>
-  <input id="open" type="submit" value="Open" onclick="post('open')"/>
-  <input id="blind" type="submit" value="Blind" onclick="post('blind')"/><br/>
-  <input id="last" type="submit" value="Last trick" onmousedown="showLast()"onmouseup="hideLast()">
-  <select id="bettings"></select>
-  <input id="bet" type="submit" value="Bet" onclick="bet()"/>
-  <input id="pass" type="submit" value="Pass" onclick="post('pass')"/><br/>
-  <input id="collect" type="submit" value="Collect" onclick="post('collect')"/>
-  <input id="leave" type="submit" value="Leave" onclick="leave()"/>
+  <input id="deal" style="display:none" type="submit" value="Deal" onclick="post('deal')"/>
+  <input id="open" style="display:none" type="submit" value="Open" onclick="post('open')"/>
+  <input id="blind" style="display:none" type="submit" value="Blind" onclick="post('blind')"/><br/>
+  <input id="last" style="display:none" type="submit" value="Last trick" onmousedown="showLast()"onmouseup="hideLast()">
+  <select id="bettings" style="display:none"></select>
+  <input id="bet" style="display:none" type="submit" value="Bet" onclick="bet()"/>
+  <input id="pass" style="display:none" type="submit" value="Pass" onclick="post('pass')"/><br/>
+  <input id="collect" style="display:none" type="submit" value="Collect" onclick="post('collect')"/>
+  <input id="quit" type="submit" value="Quit" onclick="quit()"/>
 </div>
 
 <script type="text/javascript" src="/js/ajax.js"></script>

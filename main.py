@@ -37,7 +37,7 @@ def main():
     ('/host', Host),
     ('/play', Play),
     ('/update', Update),
-    ('/start', Start),
+    ('/deal', Deal),
     ('/open', GoOpen),
     ('/blind', GoBlind),
     ('/bet', RaiseBet),

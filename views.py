@@ -61,7 +61,7 @@ class Sessions(webapp.RequestHandler):
             line['hostedby'] = s.player_1.user.nickname()
             line['started'] = s.started
             line['lastmove'] = s.modified
-            if s.state in ('waiting', 'ready'):
+            if s.state in ('hosted', 'ready'):
                 line['turn'] = s.dealer.user.nickname()
             else:
                 line['turn'] = s.turn.user.nickname()
@@ -94,12 +94,12 @@ class Play(webapp.RequestHandler):
         except GameError, error:
             return self.response.out.write(render('error.html', {'error': error}))
 
-class Start(webapp.RequestHandler):
+class Deal(webapp.RequestHandler):
     def post(self):
         user = users.get_current_user()
         session = getSession(self)
         player = session.getPlayerByUser(user)
-        session.start(player)
+        session.deal(player)
 
 class GoOpen(webapp.RequestHandler):
     def post(self):
@@ -124,7 +124,7 @@ class RaiseBet(webapp.RequestHandler):
         if session.state == 'bettings':
             session.raiseBet(player, upto)
         elif session.state == 'finalBet':
-            session.begin(player, upto)
+            session.start(player, upto)
 
 class MakePass(webapp.RequestHandler):
     def post(self):
@@ -251,9 +251,14 @@ class Update(webapp.RequestHandler):
                 if turn == player:
                     response['info_header'] = 'Discard 3 card and make final bet'
                     response['bank'] = [str(c) for c in session.bank]
-                    response['bettings'] = []
-                    for bet in range(session.bet, 301, 10):
-                        response['bettings'].append(bet)
+                    if session.blind:
+                        response['bettings'] = [session.bet]
+                        for bet in range(session.bet*2, 301, 10):
+                            response['bettings'].append(bet)
+                    else:
+                        response['bettings'] = []
+                        for bet in range(session.bet, 301, 10):
+                            response['bettings'].append(bet)
                 else:
                     response['info_header'] = 'Waiting for final bet'
                     response['bank'] = ['BACK'] * len(session.bank)
@@ -279,6 +284,11 @@ class Update(webapp.RequestHandler):
                         response['memo'].append(str(p.thrown[offset-2]))
                     else:
                         response['memo'].append(None)
+                if len(player.thrown) == 0:
+                    if session.blind:
+                        response['memo'] = ['BACK'] * 3
+                    else:
+                        response['memo'] = [str(c) for c in session.memo]
                 response['cards'] = [str(c) for c in sorted(player.cards)]
                 if session.trump:
                     response['trump'] = 'Trump: ' + ThousandCard.kinds[session.trump]
@@ -312,5 +322,5 @@ class Update(webapp.RequestHandler):
 
         else:
             response['info_header'] = 'Waiting for players'
-            response['state'] = 'waiting'
+            response['state'] = 'hosted'
         return response

@@ -123,6 +123,7 @@ class Session(db.Model):
     state = db.StringProperty()
     blind = db.BooleanProperty(default=False)
     bank = ThousandCardProperty()
+    memo = ThousandCardProperty()
     trump = db.StringProperty()
     info = db.StringProperty()
 
@@ -138,7 +139,7 @@ class Session(db.Model):
         player.put()
         self.player_1 = player
         self.dealer = player
-        self.state = 'waiting'
+        self.state = 'hosted'
         self.put()
         return player
 
@@ -194,10 +195,11 @@ class Session(db.Model):
         elif current == self.player_3:
             return self.player_1
 
-    def start(self, player):
+    def deal(self, player):
         """
         New game is started in given session.
         The game can only be started by dealer.
+        Dealer deals the cards.
         The turn is given to player after dealer.
 
         Fails if:
@@ -225,6 +227,7 @@ class Session(db.Model):
             player.put()
         self.info = '%s deals the cards' % player.user.nickname()
         self.bank = cards[21:24]
+        self.memo = []
         self.turn = self.dealer = self.getNextPlayer(self.dealer)
         self.bet = 90
         self.state = 'bettings'
@@ -274,8 +277,6 @@ class Session(db.Model):
             return
         self.turn = next
         self.put()
-        if self.betsOver():
-            self.finishBets()
 
     def makePass(self, player):
         """
@@ -304,28 +305,10 @@ class Session(db.Model):
         next = self.getNextPlayer(player)
         if next.passed:
             next = self.getNextPlayer(next)
-        if next.passed:
-            self.finishBets()
-            return
         self.turn = next
         self.put()
         if self.betsOver():
             self.finishBets()
-
-    def getPlayerOffset(self, player):
-        """
-        Returns given player offset in current game.
-        That is, how far away the player is from the first player.
-        """
-
-        if (len(self.bank) == 0) or (self.state != 'inGame'):
-            return 0
-        else:
-            card = player.bank[0]
-            nextcard = self.getNextPlayer(player).bank[0]
-            if self.bank[0] == card: return 0
-            elif self.bank[0] == nextcard: return 1
-            else: return 2
 
     def isFirstMove(self):
         """
@@ -359,9 +342,9 @@ class Session(db.Model):
         Returns bets winner (last betting player) which can collect the bank.
         """
 
-        if self.player_1.bet == '300': return self.player_1
-        if self.player_2.bet == '300': return self.player_2
-        if self.player_3.bet == '300': return self.player_3
+        if self.player_1.bet == 300: return self.player_1
+        if self.player_2.bet == 300: return self.player_2
+        if self.player_3.bet == 300: return self.player_3
 
         if not self.player_1.passed: return self.player_1
         elif not self.player_2.passed: return self.player_2
@@ -397,6 +380,7 @@ class Session(db.Model):
         player.cards += self.bank
         player.put()
         self.info = '%s takes the bank' % player.user.nickname()
+        self.memo += self.bank
         self.bank = []
         self.state = 'finalBet'
         self.put()
@@ -448,7 +432,7 @@ class Session(db.Model):
         player.cards.append(card)
         player.put()
 
-    def begin(self, player, finalBet):
+    def start(self, player, finalBet):
         """
         Called after bank collection and final bet. Start the main game.
 
@@ -473,7 +457,12 @@ class Session(db.Model):
             raise GameError('Bet must be divisible by 10.')
         if finalBet < self.bet:
             raise GameError('Your bet must be higher or equal than current bet.')
+        if self.blind and (finalBet != self.bet) and (finalBet < self.bet * 2):
+            raise GameError('When blind, your final bet must be double than current bet or equal.')
 
+        if self.blind and (finalBet > self.bet * 2):
+            self.blind = False
+            player.blind = False
         self.bet = finalBet
         player.bet = finalBet
         self.state = 'inGame'
@@ -489,17 +478,15 @@ class Session(db.Model):
 
         Fails if:
             - The turn is not for the given player.
-            - There is already 3 cards in bank.
             - Player does not have given card.
             - Game state is not for putting cards.
+            - Given card doesn't match bank kind.
         """
 
         if self.state != 'inGame':
             raise GameError('You can not put cards in this game state.')
         if self.turn != player:
             raise GameError('It\'s not your turn to go.')
-        if len(self.bank) == 3:
-            raise GameError('There is already 3 cards in bank.')
         if not card in player.cards:
             raise GameError('Player does not have given card.')
 
@@ -558,7 +545,7 @@ class Session(db.Model):
                         if self.blind:
                             pts *= 2
                         pts = int(round(pts, -1))
-                        if p.points > 900:
+                        if p.points >= 900:
                             pts = 0
                         p.points += pts
                     if p.points >= 1000:
@@ -581,6 +568,21 @@ class Session(db.Model):
             self.turn = self.getNextPlayer(player)
         player.put()
         self.put()
+
+    def getPlayerOffset(self, player):
+        """
+        Returns given player offset in current game.
+        That is, how far away the player is from the first player.
+        """
+
+        if (len(self.bank) == 0) or (self.state != 'inGame'):
+            return 0
+        else:
+            card = player.bank[0]
+            nextcard = self.getNextPlayer(player).bank[0]
+            if self.bank[0] == card: return 0
+            elif self.bank[0] == nextcard: return 1
+            else: return 2
 
 
 class History(db.Model):
