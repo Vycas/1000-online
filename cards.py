@@ -22,29 +22,6 @@ class Card:
         The queen of hearts -> HQ
         The ace of clubs -> CA
         Seven of spades -> S7
-
-    >>> c = Card('HQ')
-    >>> c.value()
-    'Q'
-    >>> c.kind()
-    'H'
-    >>> c.valueName()
-    'Queen'
-    >>> c.kindName()
-    'Hearts'
-    >>> c.fullName()
-    'The Queen of Hearts'
-    >>> d = Card('D8')
-    >>> d < c
-    True
-    >>> Card('H0')
-    Traceback (most recent call last):
-        ...
-    ValueError: Invalid value code given for the card.
-    >>> Card('W7')
-    Traceback (most recent call last):
-        ...
-    ValueError: Invalid kind code given for the card.
     """
 
     def __init__(self, code):
@@ -118,8 +95,3 @@ class ThousandCard(Card):
     weight = {'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2, '9': 0}
     values = {'A': 'Ace', 'K': 'King', 'Q': 'Queen', 'J': 'Jack', '10': 'Ten', '9': 'Nine'}
     value_order = ['9', 'J', 'Q', 'K', '10', 'A']
-
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
