@@ -1,2 +1,5 @@
 *.pyc
 project.tmproj
+.coverage
+htmlcov
+cover

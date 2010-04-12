@@ -44,7 +44,8 @@ def main():
     ('/pass', MakePass),
     ('/collect', CollectBank),
     ('/put', PutCard),
-    ('/retrieve', RetrieveCard)
+    ('/retrieve', RetrieveCard),
+    ('/plus', TakePlus)
     ], debug=True)
     
   util.run_wsgi_app(application)

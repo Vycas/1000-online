@@ -161,6 +161,13 @@ class RetrieveCard(webapp.RequestHandler):
         card = ThousandCard(card)
         session.retrieveCard(player, card)
 
+class TakePlus(webapp.RequestHandler):
+    def post(self):
+        user = users.get_current_user()
+        session = getSession(self)
+        player = session.getPlayerByUser(user)
+        session.takePlus(player)
+
 class Update(webapp.RequestHandler):
     def get(self):
         try:
@@ -194,9 +201,11 @@ class Update(webapp.RequestHandler):
             if pl:
                 response[p + '_username'] = pl.user.nickname()
                 response[p + '_points'] = str(pl.points) + ' points'
+                response[p + '_plus'] = pl.plus
             else:
                 response[p + '_username'] = '[Not connected]'
                 response[p + '_points'] = ''
+                response[p + '_plus'] = False
 
         response['info_header'] = ''
 
@@ -306,7 +315,7 @@ class Update(webapp.RequestHandler):
                 response['opponent1_info'] = 'Took: %d' % opponent1.bet
                 response['opponent2_info'] = 'Took: %d' % opponent2.bet
                 response['cards'] = []
-                response['bank'] = [str(p.thrown[-1]) for p in (player, opponent1, opponent2)]
+                response['bank'] = [(len(p.thrown) > 0 and str(p.thrown[-1])) or None for p in (player, opponent1, opponent2)]
             elif session.state == 'finish':
                 response['state'] = 'finish'
                 response['info_header'] = session.info

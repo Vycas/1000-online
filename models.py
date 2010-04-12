@@ -432,6 +432,44 @@ class Session(db.Model):
         player.cards.append(card)
         player.put()
 
+    def takePlus(self, player):
+        """
+        Takes a plus (passes the game after bettings) for a player.
+        
+        Fails if:
+            - Game state is not final bet.
+            - The turn is not for the given player.
+            - Player already has a plus. (It is only possible to pass once after bettings.)
+        """
+        
+        if self.state != 'finalBet':
+            raise GameError('Taking a plus is possible only in final bet state.')
+        if self.turn != player:
+            raise GameError('It\'s not your turn to go.')
+        if player.plus:
+            raise GameError('Player already has a plus.')
+        
+        player.plus = True
+        player.bet = 0
+        player.put()
+        self.state = 'endGame'
+        nextdealer = self.getNextPlayer(self.getNextPlayer(self.dealer))
+        self.dealer = nextdealer
+        self.turn = nextdealer
+        self.info = '%s passes the game' % player.user.nickname()
+        self.put()
+        pts = 60
+        if self.blind:
+            pts *= 2
+        opponent1 = self.getNextPlayer(player)
+        opponent2 = self.getNextPlayer(opponent1)
+        for op in (opponent1, opponent2):
+            if op.points >= 880:
+                pts = 0                
+            op.points += pts
+            op.bet = pts
+            op.put()
+
     def start(self, player, finalBet):
         """
         Called after bank collection and final bet. Start the main game.
@@ -545,7 +583,7 @@ class Session(db.Model):
                         if self.blind:
                             pts *= 2
                         pts = int(round(pts, -1))
-                        if p.points >= 900:
+                        if p.points >= 880:
                             pts = 0
                         p.points += pts
                     if p.points >= 1000:

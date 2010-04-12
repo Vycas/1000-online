@@ -361,6 +361,69 @@ class TestSessionFinalBet(unittest.TestCase):
         self.assertFalse(card in self.session.bank)
         self.assertRaises(GameError, self.session.retrieveCard, turn, card)
 
+    def test_takePlusPreconditions(self):
+        turn = self.session.turn
+        nonturn = self.session.getNextPlayer(turn)
+        self.session.state = 'incorrect'
+        self.assertRaises(GameError, self.session.takePlus, turn)
+        self.session.state = 'finalBet'
+        self.assertRaises(GameError, self.session.takePlus, nonturn)
+        turn.plus = True
+        self.assertRaises(GameError, self.session.takePlus, turn)
+
+    def test_takePlusCommon(self):
+        player = self.session.turn
+        dealer = self.session.dealer
+        player.points = 0
+        self.session.state = 'finalBet'
+        self.session.takePlus(player)
+        self.assertTrue(player.plus)
+        self.assertEqual(self.session.state, 'endGame')
+        newdealer = self.session.getNextPlayer(self.session.getNextPlayer(dealer))
+        self.assertEqual(self.session.dealer, newdealer)
+        self.assertEqual(self.session.turn, newdealer)
+        self.assertEqual(player.points, 0)
+
+    def test_takePlusOpen(self):
+        player = self.session.turn
+        opponent1 = self.session.getNextPlayer(player)
+        opponent2 = self.session.getNextPlayer(opponent1)
+        opponent1.points = 100
+        opponent2.points = 100
+        self.session.state = 'finalBet'
+        self.session.takePlus(player)
+        self.assertEqual(opponent1.points, 160)
+        self.assertEqual(opponent2.points, 160)
+        self.assertEqual(opponent1.bet, 60)
+        self.assertEqual(opponent2.bet, 60)
+    
+    def test_takePlusBlind(self):
+        player = self.session.turn
+        opponent1 = self.session.getNextPlayer(player)
+        opponent2 = self.session.getNextPlayer(opponent1)
+        opponent1.points = 100
+        opponent2.points = 100
+        self.session.state = 'finalBet'
+        self.session.blind = True
+        self.session.takePlus(player)
+        self.assertEqual(opponent1.points, 220)
+        self.assertEqual(opponent2.points, 220)
+        self.assertEqual(opponent1.bet, 120)
+        self.assertEqual(opponent2.bet, 120)
+    
+    def test_takePlusOver880(self):
+        player = self.session.turn
+        opponent1 = self.session.getNextPlayer(player)
+        opponent2 = self.session.getNextPlayer(opponent1)
+        opponent1.points = 880
+        opponent2.points = 100
+        self.session.state = 'finalBet'
+        self.session.takePlus(player)
+        self.assertEqual(opponent1.points, 880)
+        self.assertEqual(opponent2.points, 160)
+        self.assertEqual(opponent1.bet, 0)
+        self.assertEqual(opponent2.bet, 60)
+
     def test_startPreconditions(self):
         turn = self.session.turn
         nonturn = self.session.getNextPlayer(turn)
@@ -593,15 +656,15 @@ class TestSessionGameplay(unittest.TestCase):
         self.assertEqual(self.session.player_2.points, 0)
         self.assertEqual(self.session.player_3.points, 50)
     
-    def test_over900(self):
+    def test_over880(self):
         self.processGame()
-        self.session.player_3.points = 900
+        self.session.player_3.points = 880
         self.session.putCard(self.session.player_3, ThousandCard('HK'))
         self.assertEqual(self.session.state, 'endGame')
         self.assertEqual(self.session.turn, self.session.dealer)
         self.assertEqual(self.session.player_1.points, 130)
         self.assertEqual(self.session.player_2.points, 0)
-        self.assertEqual(self.session.player_3.points, 900)
+        self.assertEqual(self.session.player_3.points, 880)
     
     def test_sessionFinish(self):
         self.processGame()
