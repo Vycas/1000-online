@@ -10,6 +10,20 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Chat
+  properties:
+  - name: session
+
+- kind: Chat
+  properties:
+  - name: session
+  - name: date
+
+- kind: Chat
+  properties:
+  - name: session
+  - name: datetime
+
 - kind: Session
   properties:
   - name: player_1

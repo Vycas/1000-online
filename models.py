@@ -636,6 +636,13 @@ class History(db.Model):
     player_3 = db.IntegerProperty()
 
 
+class Chat(db.Model):
+    session = db.ReferenceProperty(Session)
+    player = db.ReferenceProperty(Player)
+    datetime = db.DateTimeProperty(auto_now_add=True)
+    message = db.StringProperty()
+
+
 def cardCompare(self, other):
     """
     Compares to cards with respect to trump.

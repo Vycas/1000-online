@@ -1,10 +1,14 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
+from google.appengine.ext import db
 from models import Session, Player, GameError
 from cards import ThousandCard
+import models
 import simplejson as json
 import os
+import time
+import datetime
 
 def render(name, options):
     path = os.path.join(os.path.dirname(__file__), 'templates', name)
@@ -90,7 +94,7 @@ class Play(webapp.RequestHandler):
             player = session.getPlayerByUser(user)
             if player is None:
                 player = session.join(user)
-            return self.response.out.write(render('game.html', {'ingame': True}))
+            return self.response.out.write(render('game.html', {'ingame': True, 'session': session.key().id()}))
         except GameError, error:
             return self.response.out.write(render('error.html', {'error': error}))
 
@@ -182,7 +186,24 @@ class Update(webapp.RequestHandler):
         response = {}
         user = users.get_current_user()
         id = self.request.get('id')
+        last = self.request.get('last')            
+        response['last'] = repr(time.time())
         session = getSession(handler)
+        lastChat = self.request.get('last_chat')
+        if lastChat:
+            stamp = datetime.datetime.fromtimestamp(float(lastChat)+1)
+            query = db.GqlQuery("SELECT * FROM Chat " + "WHERE session = :1 AND datetime > :2", session, stamp)
+        else:
+            query = db.GqlQuery("SELECT * FROM Chat " + "WHERE session = :1", session)
+        results = query.fetch(100)
+        if results:
+            response['last_chat'] = repr(time.mktime(results[-1].datetime.timetuple()))
+        else:
+            response['last_chat'] = ''
+        response['chat'] = [{'datetime': r.datetime.strftime('%Y.%m.%d %H:%M:%S'), 
+                             'player': r.player.user.nickname(), 
+                             'message': r.message} for r in results]
+        
         player = session.getPlayerByUser(user)
         if player is None:
             player = session.join(user)
@@ -335,3 +356,15 @@ class Update(webapp.RequestHandler):
             response['info_header'] = 'Waiting for players'
             response['state'] = 'hosted'
         return response
+
+class Chat(webapp.RequestHandler):
+    def post(self):
+        user = users.get_current_user()
+        session = getSession(self)
+        player = session.getPlayerByUser(user)
+        message = self.request.get('message')
+        chat = models.Chat()
+        chat.session = session
+        chat.player = player
+        chat.message = message
+        chat.put()

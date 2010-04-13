@@ -10,7 +10,13 @@ function getParam(name) {
   return param;
 }
 
+var message = document.getElementById("chat_message");
+var chat = document.getElementById("chat_messages");
+var session_id = document.getElementById("session_id").value;
+
 var dict;
+var last = '';
+var last_chat = '';
 var last_turn;
 var last_state;
 
@@ -27,7 +33,7 @@ function sendMessage(url) {
 }
 
 function update() {
-  var url = '/update?id=' + getParam('id');
+  var url = '/update?id=' + session_id + '&last=' + last + '&last_chat=' + last_chat;
   
   if (xmlHttp) {
     try {
@@ -35,6 +41,12 @@ function update() {
         if ((xmlHttp.readyState == 4) && (xmlHttp.status == 200)) {
           var response = xmlHttp.responseText;
           eval('dict = ' + response);
+          last = dict.last;
+          last_chat = dict.last_chat;
+          for (var c in dict.chat) {
+            chat.value += ('['+dict.chat[c].datetime+'] '+dict.chat[c].player+' > '+dict.chat[c].message+'\n');
+          }
+          chat.scrollTop = chat.scrollHeight - chat.clientHeight;
           document.getElementById('info_header').innerHTML = dict.info_header;
           var myturn = dict.player_turn;
           var turn = dict.player_turn ? 1 : (dict.opponent1_turn ? 2 : 3);
@@ -137,7 +149,7 @@ function update() {
 
 function updater() {
   update();
-  window.setTimeout(updater, 3000);
+  window.setTimeout(updater, 1000);
 }
 
 function show(element) {
@@ -172,7 +184,7 @@ function put(card) {
   if (name == 'BACK') {
     return;
   }
-  var url = '/put?id=' + getParam('id') + '&card=' + name;
+  var url = '/put?id=' + session_id + '&card=' + name;
   sendMessage(url);
   update();
   
@@ -187,7 +199,7 @@ function retrieve(card) {
   if (name == 'BACK') {
     return;
   }
-  var url = '/retrieve?id=' + getParam('id') + '&card=' + name;
+  var url = '/retrieve?id=' + session_id + '&card=' + name;
   sendMessage(url);
   update();
 }
@@ -195,13 +207,13 @@ function retrieve(card) {
 function bet() {
   var bettings = document.getElementById('bettings');
   var bet = bettings.options[bettings.selectedIndex].value;
-  var url = '/bet?id=' + getParam('id') + '&upto=' + bet;
+  var url = '/bet?id=' + session_id + '&upto=' + bet;
   sendMessage(url);
   update();
 }
 
 function post(cmd, id) {
-  var url = '/' + cmd + '?id=' + getParam('id');
+  var url = '/' + cmd + '?id=' + session_id;
   sendMessage(url);
   update();
 }
@@ -228,4 +240,26 @@ function hideLast() {
 
 function quit() {
   location.href = '/sessions'
+}
+
+function checkEnter() {
+  var code;
+  if (!e) var e = window.event;
+  if (e.keyCode) code = e.keyCode;
+  else if (e.which) code = e.which;
+  if (code == 13) postMessage();
+}
+
+function postMessage() {
+  if (!message.value)
+    return;
+  var params = "id="+session_id+"&message="+message.value;
+  var chatPoster = createXmlHttpRequestObject();
+  chatPoster.open("POST", "/chat", false);
+  chatPoster.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  chatPoster.setRequestHeader("Content-length", params.length);
+  chatPoster.setRequestHeader("Connection", "close");
+  chatPoster.send(params);
+  message.value = "";
+  updateMessages();
 }

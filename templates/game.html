@@ -1,6 +1,8 @@
 {% extends "master.html" %}
 {% block title %}Game{% endblock %}
 {% block game %}
+<input id="session_id" type="hidden" name="id" value="{{ session }}"/>
+
 <div id="spacer"></div>
 
 <div id="left_opponent" class="player_box">
@@ -65,7 +67,14 @@
   <input id="quit" type="submit" value="Quit" onclick="quit()"/>
 </div>
 
+<div id="chat">
+    <textarea id="chat_messages" rows="4" cols="60" readonly="true">[mini-chat]</textarea><br/>
+    <input id="chat_message" name="message" type="text" onkeyup="checkEnter()"/>
+    <input id="chat_submit" type="submit" value="Send" onclick="postMessage()"/>
+</div>
+
 <script type="text/javascript" src="/js/ajax.js"></script>
 <script type="text/javascript" src="/js/game.js"></script>
+<script type="text/javascript" src="/js/chat.js"></script>
 <script type="text/javascript">updater();</script>
 {% endblock %}

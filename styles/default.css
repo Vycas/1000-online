@@ -263,6 +263,20 @@ color: #DA514D;
 margin-left: 5px;
 }
 
+#chat {
+width: 680px;
+text-align: center;
+}
+
+#chat_messages {
+color: #50514D;
+border: solid 1px #dadada;
+}
+
+#chat_message {
+width: 380px;
+}
+
 input, select {
 color: #50514D;
 border: solid 1px #dadada;
@@ -287,7 +301,7 @@ cursor: pointer;
 }
 
 #spacer {
-height: 350px;
+height: 325px;
 }
 
 .player_box {
@@ -345,7 +359,7 @@ margin: 2px;
 
 #bank {
 position: absolute;
-top: 70px;
+top: 60px;
 left: 255px;
 right: 255px;
 height: 150px;
@@ -372,7 +386,7 @@ right: 0px;
 
 #cards {
 position: absolute;
-top: 240px;
+top: 225px;
 left: 150px;
 right: 150px;
 }
