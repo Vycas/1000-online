@@ -631,6 +631,7 @@ class Session(db.Model):
 
 class History(db.Model):
     session = db.ReferenceProperty(Session)
+    datetime = db.DateTimeProperty(auto_now_add=True)
     player_1 = db.IntegerProperty()
     player_2 = db.IntegerProperty()
     player_3 = db.IntegerProperty()

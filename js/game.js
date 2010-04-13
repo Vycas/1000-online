@@ -44,7 +44,7 @@ function update() {
           last = dict.last;
           last_chat = dict.last_chat;
           for (var c in dict.chat) {
-            chat.value += ('['+dict.chat[c].datetime+'] '+dict.chat[c].player+' > '+dict.chat[c].message+'\n');
+            chat.innerHTML += ('<span class="date">['+dict.chat[c].datetime+']</span> <span class="player">'+dict.chat[c].player+': </span> '+dict.chat[c].message+'<br/>');
           }
           chat.scrollTop = chat.scrollHeight - chat.clientHeight;
           document.getElementById('info_header').innerHTML = dict.info_header;
@@ -149,7 +149,7 @@ function update() {
 
 function updater() {
   update();
-  window.setTimeout(updater, 1000);
+  window.setTimeout(updater, 3000);
 }
 
 function show(element) {
@@ -261,5 +261,5 @@ function postMessage() {
   chatPoster.setRequestHeader("Connection", "close");
   chatPoster.send(params);
   message.value = "";
-  updateMessages();
+  update();
 }

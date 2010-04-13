@@ -57,18 +57,19 @@
   <h3 class="first">Game menu</h3>
   <input id="deal" style="display:none" type="submit" value="Deal" onclick="post('deal')"/>
   <input id="open" style="display:none" type="submit" value="Open" onclick="post('open')"/>
-  <input id="blind" style="display:none" type="submit" value="Blind" onclick="post('blind')"/><br/>
+  <input id="blind" style="display:none" type="submit" value="Blind" onclick="post('blind')"/>
   <input id="last" style="display:none" type="submit" value="Last trick" onmousedown="showLast()"onmouseup="hideLast()">
   <select id="bettings" style="display:none"></select>
   <input id="bet" style="display:none" type="submit" value="Bet" onclick="bet()"/>
-  <input id="pass" style="display:none" type="submit" value="Pass" onclick="post('pass')"/><br/>
+  <input id="pass" style="display:none" type="submit" value="Pass" onclick="post('pass')"/>
   <input id="plus" style="display:none" type="submit" value="Pass the game" onclick="post('plus')"/><br/>
   <input id="collect" style="display:none" type="submit" value="Collect" onclick="post('collect')"/>
+  <input id="stats" type="submit" value="Stats" onclick="location.href='/stats?id={{session}}'"/>
   <input id="quit" type="submit" value="Quit" onclick="quit()"/>
 </div>
 
 <div id="chat">
-    <textarea id="chat_messages" rows="4" cols="60" readonly="true">[mini-chat]</textarea><br/>
+    <div id="chat_messages">[mini-chat]</div>
     <input id="chat_message" name="message" type="text" onkeyup="checkEnter()"/>
     <input id="chat_submit" type="submit" value="Send" onclick="postMessage()"/>
 </div>

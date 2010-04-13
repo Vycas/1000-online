@@ -1,8 +1,32 @@
 {% extends "master.html" %}
-{% block title %}Statistics{% endblock %}
-{% block content %}
+{% block title %}Session Statistics{% endblock %}
+{% block game %}
 <div>
-  <h1 class="first">My.<span>statistics</span></h1>
-  <p>Coming soon!</p>
+  <div style="float:right">
+    <input type="submit" value="Play" onclick="location.href='/play?id={{session}}'"/>
+    <input type="submit" value="Quit" onclick="location.href='/sessions'"/>
+  </div>
+  <h1 class="first">Session.<span>statistics</span></h1>
+  <img id="stats_chart" src="{{ chart }}"/>
+  <center>
+    <table class="centered" style="width:600px">
+      <thead>
+        <tr>
+          <th>{{ players.0 }}</th>
+          <th>{{ players.1 }}</th>
+          <th>{{ players.2 }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in points %}
+        <tr>
+          <td>{{ p.0 }}</td>
+          <td>{{ p.1 }}</td>
+          <td>{{ p.2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </center>
 </div>
 {% endblock %}

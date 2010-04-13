@@ -221,6 +221,10 @@ margin-top: 10px;
 font-size: 12px;
 }
 
+table.centered td, table.centered th {
+text-align: center;
+}
+
 table th {
 background-image: url('/images/bbg0.gif');
 color: #50514D;
@@ -264,17 +268,31 @@ margin-left: 5px;
 }
 
 #chat {
-width: 680px;
+margin-left: 140px;
+width: 400px;
 text-align: center;
 }
 
 #chat_messages {
 color: #50514D;
 border: solid 1px #dadada;
+overflow: auto;
+width: 400px;
+height: 50px;
+text-align: left;
+}
+
+#chat_messages .date {
+color: #9F9F9F;
+}
+
+#chat_messages .player {
+font-weight: bold;
+font-size: 110%;
 }
 
 #chat_message {
-width: 380px;
+width: 300px;
 }
 
 input, select {

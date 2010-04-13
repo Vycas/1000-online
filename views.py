@@ -2,8 +2,9 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 from google.appengine.ext import db
-from models import Session, Player, GameError
+from models import Session, Player, History, GameError
 from cards import ThousandCard
+from pygooglechart import *
 import models
 import simplejson as json
 import os
@@ -84,7 +85,30 @@ class Host(webapp.RequestHandler):
 
 class Stats(webapp.RequestHandler):
     def get(self):
-        self.response.out.write(render('stats.html', options()))
+        user = users.get_current_user()
+        session = getSession(self)
+        query = db.GqlQuery("SELECT * FROM History " + "WHERE session = :1 ORDER BY datetime", session)
+        results = query.fetch(1000)
+        points = [[p for p in (r.player_1, r.player_2, r.player_3)] for r in results]
+        players = [p.user.nickname() + ((p.plus and ' +') or ' ') for p in (session.player_1, session.player_2, session.player_3)]
+        colors = ['FFBF00', '85AC1E', 'FF7100']
+        data1 = [p[0] for p in points]
+        data2 = [p[1] for p in points]
+        data3 = [p[2] for p in points]
+        minimum = min(0, round(min(data1 + data2 + data3)-100, -2))
+        chart = SimpleLineChart(680, 300, 'Progress of the game', players, colors, y_range=(minimum, 1000))
+        chart.set_legend_position('r')
+        chart.set_grid(0, 10000.0 / (1000-minimum), 5, 5)
+        chart.set_axis_labels(Axis.BOTTOM, range(1, len(points)+1))
+        chart.set_axis_range(Axis.LEFT, minimum, 1000)
+        chart.add_data(data1)
+        chart.add_data(data2)
+        chart.add_data(data3)
+        self.response.out.write(render('stats.html', {'ingame': True,
+                                                      'session': session.key().id(),
+                                                      'players': players,
+                                                      'points': points,
+                                                      'chart': chart.get_url()}))
 
 class Play(webapp.RequestHandler):
     def get(self):

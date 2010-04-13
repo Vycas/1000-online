@@ -24,6 +24,11 @@ indexes:
   - name: session
   - name: datetime
 
+- kind: History
+  properties:
+  - name: session
+  - name: datetime
+
 - kind: Session
   properties:
   - name: player_1
