@@ -90,12 +90,24 @@ class Stats(webapp.RequestHandler):
         query = db.GqlQuery("SELECT * FROM History " + "WHERE session = :1 ORDER BY datetime", session)
         results = query.fetch(1000)
         points = [[p for p in (r.player_1, r.player_2, r.player_3)] for r in results]
-        players = [p.user.nickname() + ((p.plus and ' +') or ' ') for p in (session.player_1, session.player_2, session.player_3)]
+        players = []
+        for p in (session.player_1, session.player_2, session.player_3):
+            if p and p.user:
+                name = p.user.nickname()
+                if p.plus:
+                    name += ' +'
+                players.append(name)
+            else:
+                players.append('[Not connected]')
         colors = ['FFBF00', '85AC1E', 'FF7100']
         data1 = [p[0] for p in points]
         data2 = [p[1] for p in points]
         data3 = [p[2] for p in points]
-        minimum = min(0, round(min(data1 + data2 + data3)-100, -2))
+        data = data1 + data2 + data3
+        if len(data) > 0:
+            minimum = min(0, round(min(data1 + data2 + data3)-100, -2))
+        else:
+            minimum = 0
         chart = SimpleLineChart(680, 300, 'Progress of the game', players, colors, y_range=(minimum, 1000))
         chart.set_legend_position('r')
         chart.set_grid(0, 10000.0 / (1000-minimum), 5, 5)
@@ -222,8 +234,6 @@ class Update(webapp.RequestHandler):
         results = query.fetch(100)
         if results:
             response['last_chat'] = repr(time.mktime(results[-1].datetime.timetuple()))
-        else:
-            response['last_chat'] = ''
         response['chat'] = [{'datetime': r.datetime.strftime('%Y.%m.%d %H:%M:%S'), 
                              'player': r.player.user.nickname(), 
                              'message': r.message} for r in results]

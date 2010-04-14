@@ -42,7 +42,9 @@ function update() {
           var response = xmlHttp.responseText;
           eval('dict = ' + response);
           last = dict.last;
-          last_chat = dict.last_chat;
+          if (dict.last_chat) {
+            last_chat = dict.last_chat;
+          }
           for (var c in dict.chat) {
             chat.innerHTML += ('<span class="date">['+dict.chat[c].datetime+']</span> <span class="player">'+dict.chat[c].player+': </span> '+dict.chat[c].message+'<br/>');
           }

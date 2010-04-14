@@ -13,15 +13,6 @@ indexes:
 - kind: Chat
   properties:
   - name: session
-
-- kind: Chat
-  properties:
-  - name: session
-  - name: date
-
-- kind: Chat
-  properties:
-  - name: session
   - name: datetime
 
 - kind: History

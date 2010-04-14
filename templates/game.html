@@ -69,13 +69,12 @@
 </div>
 
 <div id="chat">
-    <div id="chat_messages">[mini-chat]</div>
+    <div id="chat_messages"></div>
     <input id="chat_message" name="message" type="text" onkeyup="checkEnter()"/>
     <input id="chat_submit" type="submit" value="Send" onclick="postMessage()"/>
 </div>
 
 <script type="text/javascript" src="/js/ajax.js"></script>
 <script type="text/javascript" src="/js/game.js"></script>
-<script type="text/javascript" src="/js/chat.js"></script>
 <script type="text/javascript">updater();</script>
 {% endblock %}
