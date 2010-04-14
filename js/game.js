@@ -48,7 +48,9 @@ function update() {
           for (var c in dict.chat) {
             chat.innerHTML += ('<span class="date">['+dict.chat[c].datetime+']</span> <span class="player">'+dict.chat[c].player+': </span> '+dict.chat[c].message+'<br/>');
           }
-          chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+          if (dict.chat.length > 0) {
+            chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+          }
           document.getElementById('info_header').innerHTML = dict.info_header;
           var myturn = dict.player_turn;
           var turn = dict.player_turn ? 1 : (dict.opponent1_turn ? 2 : 3);

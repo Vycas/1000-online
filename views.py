@@ -222,15 +222,15 @@ class Update(webapp.RequestHandler):
         response = {}
         user = users.get_current_user()
         id = self.request.get('id')
-        last = self.request.get('last')            
+        last = self.request.get('last')
         response['last'] = repr(time.time())
         session = getSession(handler)
         lastChat = self.request.get('last_chat')
         if lastChat:
             stamp = datetime.datetime.fromtimestamp(float(lastChat)+1)
-            query = db.GqlQuery("SELECT * FROM Chat " + "WHERE session = :1 AND datetime > :2", session, stamp)
+            query = db.GqlQuery("SELECT * FROM Chat " + "WHERE session = :1 AND datetime > :2 ORDER BY datetime", session, stamp)
         else:
-            query = db.GqlQuery("SELECT * FROM Chat " + "WHERE session = :1", session)
+            query = db.GqlQuery("SELECT * FROM Chat " + "WHERE session = :1 ORDER BY datetime", session)
         results = query.fetch(100)
         if results:
             response['last_chat'] = repr(time.mktime(results[-1].datetime.timetuple()))
