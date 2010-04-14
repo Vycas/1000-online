@@ -1,0 +1,38 @@
+{% extends "master.html" %}
+{% block title%}Rules of the game{% endblock %}
+{% block content %}
+<h1>Game<span>.rules</span></h1>
+<h3>Introduction</h3>
+<p>This excellent three-player game is well known in several Eastern European countries, including Russia, Belorus, Ukraine, Kazakhstan, Poland and Lithuania. 1000 means both - the game name and the target score required to win the game. There are several variations of the game, but here we will discuss only this rules of the game which is implemented in this project. If you are looking for more details you can find them <a href="http://www.pagat.com/marriage/1000.html">here</a>.</p>
+<h3>Players and cards</h3>
+<p>This variation of 1000 is played by exactly 3 players. Game uses the pack of 24 cards which includes nines, tens, jacks, queens, kings and aces. The goal of the game is to collect 1000 points as quick as possible. These points can be collected either from calls or from tricks of the cards. Each card is valued:</p>
+<ul style="margin-top:-20px">
+  <li>Ace - 11 points</li>
+  <li>Ten - 10 points</li>
+  <li>King - 4 points</li>
+  <li>Queen - 3 points</li>
+  <li>Jack - 2 points</li>
+  <li>Nine - 0 points</li>
+</ul>
+<p>During the game you also make calls if you have a pair (or pairs). It is said that you have a pair if you have both King and Queen of the same kind. Calling the pair also makes their kind the trump till the end of the game or till another call either from you or your opponent. Calling pairs gives the following points:</p>
+<ul style="margin-top:-20px">
+  <li>Spades - 40 points</li>
+  <li>Clubs - 60 points</li>
+  <li>Diamonds - 80 points</li>
+  <li>Hearts - 100 points</li>
+</ul>
+<h3>Dealing the cards</h3>
+<p>The first dealer of this game is considered the player that hosts the game. The dealer then changes in clockwise order. After dealing cards, each player receives 7 cards. 3 left cards left on the table is called a bank. Later on, players makes biddings to win the bank.</p>
+<h3>Biddings</h3>
+<p>The next player after the dealer is first to make a bet. Biddings can be made from 100 to 300 with 10 steps, for example: 100, 110, 120, 120 and so on. The first bidder must bet 100 or more. Other bidders can bet more than previous player or pass. After passing, you no longer participate in biddings. Biddings can be made either in open or blind modes. If you play as blind, you can not see your initial cards when make biddings. That way you take higher risk, but in exchange your collected points will be doubled. Player who call the highest bet, takes the bank.</p>
+<h3>Collecting the bank and making final bet</h3>
+<p>If the bank was taken as betting in blind, no cards are shown to other players. In open mode, all players can see what was in the bank. After collecting 3 cards from the bank, player must discard 3 other (or the same) cards. Opponents can not see what is discarded. Then the final bet must be made. The final bet must be higher or equal to the bet at which the bank was taken. Keep in mind that the value you bet is the points that have to collect during the game. So be careful calculating how much can you collect.</p>
+<h3>Gameplay</h3>
+<p>The first move is given for the winner of the bank. Players put cards on the table in clockwise order. When 3 cards (one from each player is put on the table) the player whois card is the highest (in points) takes the trick (all 3 cards on the table). If someone have called a pair then trumps are considered superior to other cards. When putting cards on the table on rule apply: you must put the card of the same kind as the first card on the table. If you do not have that kind then are free to put anything you want. When you take the trick, next move is yours (you are the first to put next card on the table).</p>
+<h3>Calculating result</h3>
+<p>When players put all their cards, results are calculated. Results are calculated this way: players get points for calling pairs and for tricks they take. If you take all tricks - points from the tricks are exactly equal to 120. Please note that discarded cards also calculates for points. The winner of the bank must collect the value he called or more. If even one point is missing, player receives negative points he played. For example, if player's final bet was 160 and he collected 158, his final shore will be -160. Other players also receives some points. It does not matter how much other players collect. Their collected points are rounded to tens. For example if non-bank-winner collects 36, he receives 40 points. Finally if the game was played as blind, the points for all players are doubled (both positive and negative scores). These received points are written to your cumulative account.</p>
+<h3>Barrel rule</h3>
+<p>When your points account reaches 880 or more points it said that you sit on a barrel. In this game state you no longer receive points when playing as non-bank-winner. So the only way to win the 1000 is to take the bank and successfully finish the game. If you do not take the bank for 3 games, then you lose 120 points and no longer sit on the barrel.</p>
+<h3>Finish</h3>
+<p>The first player who reaches 1000 points or more wins the whole game.</p>
+{% endblock %}

@@ -28,8 +28,9 @@ class MainHandler(webapp.RequestHandler):
 
 def main():
   application = webapp.WSGIApplication([
-    ('/', Welcome), 
-    ('/about', About), 
+    ('/', Welcome),
+    ('/about', About),
+    ('/rules', Rules),
     ('/login', Login),
     ('/logout', Logout),
     ('/sessions', Sessions),

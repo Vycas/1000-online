@@ -36,6 +36,10 @@ class Welcome(webapp.RequestHandler):
     def get(self):
         self.response.out.write(render('welcome.html', options()))
 
+class Rules(webapp.RequestHandler):
+    def get(self):
+        self.response.out.write(render('rules.html', options()))
+
 class About(webapp.RequestHandler):
     def get(self):
         self.response.out.write(render('about.html', options()))
@@ -86,41 +90,41 @@ class Host(webapp.RequestHandler):
 class Stats(webapp.RequestHandler):
     def get(self):
         user = users.get_current_user()
-        session = getSession(self)
-        query = db.GqlQuery("SELECT * FROM History " + "WHERE session = :1 ORDER BY datetime", session)
-        results = query.fetch(1000)
-        points = [[p for p in (r.player_1, r.player_2, r.player_3)] for r in results]
-        players = []
-        for p in (session.player_1, session.player_2, session.player_3):
-            if p and p.user:
-                name = p.user.nickname()
-                if p.plus:
-                    name += ' +'
-                players.append(name)
-            else:
-                players.append('[Not connected]')
-        colors = ['FFBF00', '85AC1E', 'FF7100']
-        data1 = [p[0] for p in points]
-        data2 = [p[1] for p in points]
-        data3 = [p[2] for p in points]
-        data = data1 + data2 + data3
-        if len(data) > 0:
+        try:
+            session = getSession(self)
+            query = db.GqlQuery("SELECT * FROM History " + "WHERE session = :1 ORDER BY datetime", session)
+            results = query.fetch(1000)
+            points = [[p for p in (r.player_1, r.player_2, r.player_3)] for r in results]
+            players = []
+            for p in (session.player_1, session.player_2, session.player_3):
+                if p and p.user:
+                    name = p.user.nickname()
+                    if p.plus:
+                        name += ' +'
+                    players.append(name)
+                else:
+                    players.append('[Not connected]')
+            colors = ['FFBF00', '85AC1E', 'FF7100']
+            data1 = [0] + [p[0] for p in points]
+            data2 = [0] + [p[1] for p in points]
+            data3 = [0] + [p[2] for p in points]
+            data = data1 + data2 + data3
             minimum = min(0, round(min(data1 + data2 + data3)-100, -2))
-        else:
-            minimum = 0
-        chart = SimpleLineChart(680, 300, 'Progress of the game', players, colors, y_range=(minimum, 1000))
-        chart.set_legend_position('r')
-        chart.set_grid(0, 10000.0 / (1000-minimum), 5, 5)
-        chart.set_axis_labels(Axis.BOTTOM, range(1, len(points)+1))
-        chart.set_axis_range(Axis.LEFT, minimum, 1000)
-        chart.add_data(data1)
-        chart.add_data(data2)
-        chart.add_data(data3)
-        self.response.out.write(render('stats.html', {'ingame': True,
-                                                      'session': session.key().id(),
-                                                      'players': players,
-                                                      'points': points,
-                                                      'chart': chart.get_url()}))
+            chart = SimpleLineChart(680, 300, 'Progress of the game', players, colors, y_range=(minimum, 1000))
+            chart.set_legend_position('r')
+            chart.set_grid(0, 10000.0 / (1000-minimum), 5, 5)
+            chart.set_axis_labels(Axis.BOTTOM, range(0, len(points)+1))
+            chart.set_axis_range(Axis.LEFT, minimum, 1000)
+            chart.add_data(data1)
+            chart.add_data(data2)
+            chart.add_data(data3)
+            self.response.out.write(render('stats.html', {'ingame': True,
+                                                          'session': session.key().id(),
+                                                          'players': players,
+                                                          'points': points,
+                                                          'chart': chart.get_url()}))
+        except Exception, error:
+            return self.response.out.write(render('error.html', {'error': error}))
 
 class Play(webapp.RequestHandler):
     def get(self):
