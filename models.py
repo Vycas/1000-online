@@ -470,6 +470,11 @@ class Session(db.Model):
             op.points += pts
             op.bet = pts
             op.put()
+        h = History(session=self,
+                    player_1=self.player_1.points,
+                    player_2=self.player_2.points,
+                    player_3=self.player_3.points)
+        h.put()
 
     def start(self, player, finalBet):
         """
@@ -580,6 +585,8 @@ class Session(db.Model):
                             self.info += " (Blind)"
                             pts *= 2
                         p.points += pts
+                        if p.points < 880:
+                            p.barrel = 0
                     else:
                         if self.blind:
                             pts *= 2
